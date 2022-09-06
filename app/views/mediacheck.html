@@ -1,0 +1,338 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+<div class="govuk-width-container">
+
+<main class="govuk-main-wrapper">
+
+<!--Check cam/mic-->
+<div class="camBox" style='display:none;' id='cam-box'>
+   <h2 class='govuk-heading-l'>Choose your camera and microphone</h2>
+
+   <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+         <!--<video id="camWindow" width="280px" autoplay="true" style='transform:scaleX(-1);'></video>-->
+         <img src='public/images/p17.jpg' width='280px'>
+         <br>
+         <canvas id="meter" width="280" height="10" style='background:#eee;'></canvas>
+         <!--<label class="govuk-label">
+            Join with your camera 
+               <label class="switch">
+            <input type="checkbox" id="toggle" checked OnClick="toggleSwitch()">
+            <span class="slider round"><h3 class="govuk-heading-m" id="toggletextON" style="margin-left:44px; font-size:20px;">ON</h3></span>
+         </label>
+         </label>-->
+      </div>
+
+      <div class="govuk-grid-column-one-half">
+         <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+               <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                  <h4 class="govuk-fieldset__heading" style='font-size:20px;'>
+                  Change camera
+                  </h1>
+               </legend>
+               <select class="govuk-select" id="choose-cam">
+                  <option value="published">Built-in camera</option>
+                  <option value="updated" selected>Logitech G9000</option>
+                  <option value="views">Microsoft LifeCam</option>
+               </select>
+            </fieldset>
+            <fieldset class="govuk-fieldset" style='margin-top:20px;'>
+               <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                  <h1 class="govuk-fieldset__heading" style='font-size:20px;'>
+                  Change microphone<br>
+                  </h1>
+               </legend>
+               <select class="govuk-select" id="choose-mic">
+                  <option value="published">Built-in microphone</option>
+                  <option value="updated" selected>Logitech G9000 mic</option>
+                  <option value="views">Microsoft LifeCam mic</option>
+               </select>
+            </fieldset>
+         </div>
+      </div>
+   </div>
+
+   <!--<div class="govuk-warning-text camWarning">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+               <span class="govuk-warning-text__assistive">Warning</span>
+               You need permission from the court to switch off your camera
+            </strong>
+         </div>-->
+
+   <div style='clear:both; margin-top:30px;'>
+      <button class='govuk-button' onclick='hideCamWindow();'>Close</button>
+      <!--<button class='govuk-button govuk-button--secondary' onclick='testCamMic();'>Test equipment</button>-->
+   </div>
+</div>
+
+   <script type="text/javascript">
+
+   function hideCamWindow() {
+   var cambox=document.getElementById('cam-box');
+
+   if(cambox.style.display==='none') {
+         cambox.style.display='block';
+      } else {
+         cambox.style.display='none';
+      }
+   }
+
+      var video = document.querySelector("#camWindow");
+
+      if (navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({video:true})
+      .then(function(stream) {
+        video.srcObject = stream;
+        });
+    } else {
+        console.log("getUserMedia not supported");
+    }
+
+    //audio level from the microphone
+    var audioContext = null;
+    var meter = null;
+    var canvasContext = null;
+    var WIDTH=500;
+    var HEIGHT=50;
+    var rafID = null;
+
+    window.onload = function() {
+
+    // grab our canvas
+	canvasContext = document.getElementById( "meter" ).getContext("2d");
+	
+    // monkeypatch Web Audio
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+	
+    // grab an audio context
+    audioContext = new AudioContext();
+
+    // Attempt to get audio input
+    try {
+        // monkeypatch getUserMedia
+        navigator.getUserMedia = 
+        	navigator.getUserMedia ||
+        	navigator.webkitGetUserMedia ||
+        	navigator.mozGetUserMedia;
+
+        // ask for an audio input
+        navigator.getUserMedia(
+        {
+            "audio": {
+                "mandatory": {
+                    "googEchoCancellation": "true",
+                    "googAutoGainControl": "true",
+                    "googNoiseSuppression": "true",
+                    "googHighpassFilter": "true"
+                },
+                "optional": []
+            },
+        }, onMicrophoneGranted, onMicrophoneDenied);
+    } catch (e) {
+        alert('getUserMedia threw exception :' + e);
+    }
+
+}
+
+function onMicrophoneDenied() {
+    alert("Oops! You didn't give permission to open your camera or microphone.");
+}
+
+var mediaStreamSource = null;
+
+function onMicrophoneGranted(stream) {
+    // Create an AudioNode from the stream.
+    mediaStreamSource = audioContext.createMediaStreamSource(stream);
+
+    // Create a new volume meter and connect it.
+    meter = createAudioMeter(audioContext);
+    mediaStreamSource.connect(meter);
+
+    // kick off the visual updating
+    onLevelChange();
+}
+
+function onLevelChange( time ) {
+    // clear the background
+    canvasContext.clearRect(0,0,WIDTH,HEIGHT);
+
+    // check if we're currently clipping
+    if (meter.checkClipping())
+        canvasContext.fillStyle = "red";
+    else
+        canvasContext.fillStyle = "green";
+
+    console.log(meter.volume);
+
+    // draw a bar based on the current volume
+    canvasContext.fillRect(0, 0, meter.volume * WIDTH * 1.4, HEIGHT);
+
+    // set up the next visual callback
+    rafID = window.requestAnimationFrame( onLevelChange );
+}
+
+</script>
+
+   <a href="#" class="govuk-back-link">Back</a>
+
+   <h1 class='govuk-heading-xl'>Checking your equipment</h1>
+
+   <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+
+         <div id="video-container" style="margin-top:-20px;">
+            <video  id="kit-check-video" src="/public/images/OTD Kit Check-small.mp4" style="width:80%;" controls autoplay></video>
+            <!--<div id="video-controls">
+               <button id="play-pause" onClick="playPause(this, 'kit-check-video');">Play</button>
+            </div>-->
+         </div>
+
+         <div class="govuk-grid-row" style="margin-left:0px;">
+            <video id="camWindow" width="240" autoplay="true" style="background-color:#f7f7f7; cursor:pointer; transform:scaleX(-1);" onClick="buttonActivate();"></video>
+            <br>
+            <canvas id="meter" width="240" height="30" style="background-color:#f3f3f3;"></canvas>
+         </div>
+
+
+                        <script type="text/javascript">
+
+                           var video = document.querySelector("#camWindow");
+
+                           if (navigator.mediaDevices.getUserMedia) {
+                           navigator.mediaDevices.getUserMedia({video:true})
+                           .then(function(stream) {
+                           video.srcObject = stream;
+                           });
+                        } else {
+                           console.log("getUserMedia not supported");
+                        }
+                        </script>
+
+                        <script>
+                        //audio level from the microphone
+                        var audioContext = null;
+                        var meter = null;
+                        var canvasContext = null;
+                        var WIDTH=500;
+                        var HEIGHT=50;
+                        var rafID = null;
+
+                        window.onload = function() {
+
+                        // grab our canvas
+                        canvasContext = document.getElementById( "meter" ).getContext("2d");
+                        
+                        // monkeypatch Web Audio
+                        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                        
+                        // grab an audio context
+                        audioContext = new AudioContext();
+
+                        // Attempt to get audio input
+                        try {
+                           // monkeypatch getUserMedia
+                           navigator.getUserMedia = 
+                              navigator.getUserMedia ||
+                              navigator.webkitGetUserMedia ||
+                              navigator.mozGetUserMedia;
+
+                           // ask for an audio input
+                           navigator.getUserMedia(
+                           {
+                                 "audio": {
+                                    "mandatory": {
+                                       "googEchoCancellation": "false",
+                                       "googAutoGainControl": "false",
+                                       "googNoiseSuppression": "false",
+                                       "googHighpassFilter": "false"
+                                    },
+                                    "optional": []
+                                 },
+                           }, onMicrophoneGranted, onMicrophoneDenied);
+                        } catch (e) {
+                           alert('getUserMedia threw exception :' + e);
+                        }
+
+                     }
+
+                        function onMicrophoneDenied() {
+                           alert("Oops! You didn't give permission to open your camera or microphone.");
+                        }
+
+                        var mediaStreamSource = null;
+
+                        function onMicrophoneGranted(stream) {
+                           // Create an AudioNode from the stream.
+                           mediaStreamSource = audioContext.createMediaStreamSource(stream);
+
+                           // Create a new volume meter and connect it.
+                           meter = createAudioMeter(audioContext);
+                           mediaStreamSource.connect(meter);
+
+                           // kick off the visual updating
+                           onLevelChange();
+                        }
+
+                        function onLevelChange( time ) {
+                           // clear the background
+                           canvasContext.clearRect(0,0,WIDTH,HEIGHT);
+
+                           // check if we're currently clipping
+                           if (meter.checkClipping())
+                              canvasContext.fillStyle = "green";
+                           else
+                              canvasContext.fillStyle = "green";
+
+                           console.log(meter.volume);
+
+                           // draw a bar based on the current volume
+                           canvasContext.fillRect(0, 0, meter.volume * WIDTH * 1.4, HEIGHT);
+
+                           // set up the next visual callback
+                           rafID = window.requestAnimationFrame( onLevelChange );
+                        }
+                        </script>
+
+         <a href="#" onclick='hideCamWindow();'>Change camera or microphone</a>
+            
+         <div class="govuk-grid" style="margin-top:40px; margin-left:16px;">
+            <div class="govuk-grid-row">
+               <button type="submit" class="govuk-button" onclick="location.href='thankyou'">Equipment is working</button>
+               <button type="submit" class="govuk-button govuk-button--warning" onclick="location.href='oops'">Equipment is faulty</button>
+            </div>
+            <div class="govuk-grid-row">
+               <a href="mediacheck" role="button" class="govuk-button govuk-button--secondary">Check equipment again</a>
+            </div>
+         </div>
+
+         <details class="govuk-details" style="margin-top:45px;">
+            <summary class="govuk-details__summary">
+               <span class="govuk-details__summary-text">
+                  Contact us for help
+               </span>
+            </summary>
+            <div class="govuk-details__text">
+               <p class="govuk-body" style="margin-top:10px;">
+                  Call the video hearings team on <strong>0300 303 0655</strong> and quote your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+               </p>
+               <p class="govuk-body">
+                  Email us at <a href="mailto:video-hearings@justice.gov.uk"> video-hearings@justice.gov.uk</a> quoting your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+               </p>
+            <div>
+         </details>
+
+         </div>
+      </div>
+   </div>
+
+   </main>
+
+</div>
+
+
+
+{% endblock %}

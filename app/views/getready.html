@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<head>
+<script>
+
+function skipKitCheck()
+{
+  var c = document.getElementById("Continue");
+  var s = document.getElementById("Skip");
+  var b = document.getElementById("Skipbox");
+
+  if (b.checked)
+  {
+    c.style.display = "none";
+    s.style.display = "block";
+  }
+  else
+  {
+    c.style.display="block";
+    s.style.display="none";
+  }
+}
+
+</script>
+</head>
+
+<div class="govuk-width-container">
+
+<main class="govuk-main-wrapper">
+
+<a href="#" class="govuk-back-link" style="position:absolute; top:110px;">Back</a>
+
+<div>
+  <h1 class="govuk-heading-xl">Let's confirm your equipment is working</h1>
+</div>
+
+<div>
+  <p class="govuk-body">
+    This short video will help you check that your camera and microphone are working. 
+  </p>
+</div>
+
+  <!--<details class="govuk-details">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Why do I need to give my permission?
+    </span>
+  </summary>
+  <div class="govuk-details__text">
+    Your browser gives you control over who can use your camera and microphone. This is to protect you from unknown applications or websites using your equipment without you knowing. 
+    <br><br>
+    If you give permission on this page, your camera and microphone will only be used when you’re signed into this website. Some computers show a green light when your camera is in use. If you have any concerns, please contact us.
+  </div>
+</details>-->
+
+<!--<div class="govuk-form-group">
+  <fieldset class="govuk-fieldset">
+    <div class="govuk-checkboxes">
+      <div class="govuk-checkboxes__item">
+        <input class="govuk-checkboxes__input" id="Skipbox" name="skip" type="checkbox" onClick="skipKitCheck();">
+        <label class="govuk-label govuk-checkboxes__label" for="skip">
+          I’ve already checked my equipment today. I confirm that my camera, microphone and internet connection are working.
+        </label>
+      </div>
+    </div>
+  </fieldset>
+</div>-->
+
+<form action="permission" method="get" id="Continue">
+  <button type="submit" class="govuk-button">
+    Continue
+  </button>
+</form>
+
+<form action="rules" method="get" id="Skip" style="display:none;">
+  <button type="submit" class="govuk-button">
+    Skip equipment check
+  </button>
+</form>
+
+<details class="govuk-details" style="margin-top:45px;">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Contact us for help
+    </span>
+    </summary>
+  <div class="govuk-details__text">
+    <p class="govuk-body" style="margin-top:10px;">
+      Call the video hearings team on <strong>0300 303 0655</strong> and quote your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+    </p>
+    <p class="govuk-body">
+      Email us at <a href="mailto:video-hearings@justice.gov.uk"> video-hearings@justice.gov.uk</a> quoting your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+    </p>
+</details>
+
+</main>
+
+</div>
+
+{% endblock %}

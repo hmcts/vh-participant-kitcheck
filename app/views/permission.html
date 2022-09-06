@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<head>
+<script>
+function swapButton() {
+    var a = document.getElementById("permission");
+    var b = document.getElementById("practice");
+    var c = document.getElementById("message1");
+    var d = document.getElementById("message2");
+    //var e = document.getElementById("heading1");
+    //var f = document.getElementById("heading2");
+
+    a.style.display="none";
+    b.style.display="block";
+    c.style.display="none";
+    d.style.display="block";
+    //e.style.display="none";
+    //f.style.display="block";
+}
+
+function permission() {
+var constraints = {
+    video: true,
+    audio: true
+}
+navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+    /* do stuff */
+    swapButton();
+}).catch(function(err) {
+    //log to console first 
+    console.log(err); /* handle the error */
+    if (err.name == "NotFoundError" || err.name == "DevicesNotFoundError") {
+        //required track is missing 
+        //location.href="blocked";
+    } else if (err.name == "NotReadableError" || err.name == "TrackStartError") {
+        //webcam or mic are already in use 
+        //location.href="blocked";
+    } else if (err.name == "OverconstrainedError" || err.name == "ConstraintNotSatisfiedError") {
+        //constraints can not be satisfied by avb. devices 
+        //location.href="blocked";
+    } else if (err.name == "NotAllowedError" || err.name == "PermissionDeniedError") {
+        //permission denied in browser 
+        location.href="blocked";
+    } else if (err.name == "TypeError" || err.name == "TypeError") {
+        //empty constraints object 
+        //location.href="blocked";
+    } else {
+        //other errors 
+    }
+});
+}
+
+</script>
+</head>
+
+<div class="govuk-width-container">
+
+<main class="govuk-main-wrapper">
+
+<a href="#" class="govuk-back-link" style="position:absolute; top:80px;">Back</a>
+
+<div>
+  <h1 class="govuk-heading-xl" id="heading1">Check your camera and microphone</h1>
+  <!--<h1 class="govuk-heading-xl" id="heading2" style="display:none;">Your camera and microphone are switched on</h1>-->
+</div>
+
+<div>
+    <p class="govuk-body" id="message1">Switch on your camera and microphone to make sure they are working. A pop-up box might appear on your screen asking if the service can use the camera and microphone. You should select ‘allow’.</p>
+
+    <p class="govuk-body" id="message2" style="display:none;">You can now continue to the video which will make sure you can see, speak and hear using your equipment.</p>
+</div>
+
+<!--<details class="govuk-details" id="prog-disc">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Why do I need to use my camera and microphone?
+    </span>
+  </summary>
+  <div class="govuk-details__text">
+    <p class="govuk-body">In order to check that your camera and microphone are working properly, they need to be switched on. Once the check is complete, your camera and microphone will be switch off again.</p>
+  </div>
+</details>-->
+
+<div style="margin-top:60px; display:block;" id="permission">
+    <form action="#" method="get">
+        <button type="submit" class="govuk-button" onClick="permission();">Switch on</button>
+    </form>
+</div>
+
+<div style="margin-top:60px; display:none;" id="practice">
+    <form action="mediacheck" method="get">
+        <button type="submit" class="govuk-button">View video</button>
+    </form>
+</div>
+
+<details class="govuk-details" style="margin-top:45px;">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Contact us for help
+    </span>
+    </summary>
+  <div class="govuk-details__text">
+    <p class="govuk-body" style="margin-top:10px;">
+      Call the video hearings team on <strong>0300 303 0655</strong> and quote your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+    </p>
+    <p class="govuk-body">
+      Email us at <a href="mailto:video-hearings@justice.gov.uk"> video-hearings@justice.gov.uk</a> quoting your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+    </p>
+</details>
+
+</main>
+
+</div>
+
+{% endblock %}

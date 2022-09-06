@@ -1,0 +1,19 @@
+
+{% extends "layout1.html" %}
+
+{% block content %}
+
+<div class='sign-in'>
+   <img src='public/images/HMCTS sign in image.png' width='240px'>
+   <p class='govuk-body' style='font-size:0.9em; margin-top:12px;'><i class="fal fa-arrow-left"></i> user.name@hearings.reform.hmcts.net</p>
+   <div class="govuk-form-group">
+     <label class="govuk-label" for="width-20">
+       Enter password
+     </label>
+     <input class="govuk-input govuk-input--width-20" id="width-20" style='border-bottom: solid 1px; border-top:none; border-left:none; border-right:none;' name="width-20" type="password" value='password123'></div>
+     <p class='govuk-body-s' style='color:#1d70b8; cursor:pointer;'>Forgotten my password</p>
+     <div class='small-button small-button--blue' style='float:right;' onclick='location.href="hearinglistX"'>Next</div>
+     <div class='info-box'>For assistance, call us on 0300 3030 0655 and quote your case reference number.</div>
+   </div>
+
+{% endblock %}

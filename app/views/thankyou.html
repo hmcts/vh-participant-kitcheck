@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="govuk-width-container">
+
+<main class="govuk-main-wrapper">
+
+<div class="govuk-grid-row">
+   <div class="govuk-grid-column-one-half">
+      <h1 class="govuk-heading-xl">Thank you</h1>
+   </div>
+   <!--<div class='govuk-grid-column-one-half' style='text-align:right;'>
+      <a href="#" role="button" class="govuk-button govuk-button--secondary" onclick='location.href="getready?origin=hearinglist"'>Test camera and microphone</a>
+   </div>-->
+</div>
+
+<p class='govuk-body'>You have tested your equipment...</p>
+<p class='govuk-body'>If you have any problems please contact us using the options below.</p>
+
+<details class="govuk-details" style="margin-top:45px;">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+      Contact us for help
+    </span>
+    </summary>
+  <div class="govuk-details__text">
+    <p class="govuk-body" style="margin-top:10px;">
+      Call the video hearings team on <strong>0300 303 0655</strong> and quote your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+    </p>
+    <p class="govuk-body">
+      Email us at <a href="mailto:video-hearings@justice.gov.uk"> video-hearings@justice.gov.uk</a> quoting your case number <span class="govuk-caption-m">(available between 9am and 5pm, Monday to Friday)</span>
+    </p>
+</details>
+
+</main>
+
+</div>
+        
+
+{% endblock %}
